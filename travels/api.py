@@ -1,6 +1,12 @@
 """
 This module difines API endpoints for the Django Ninja endpoints.
 It includes routes for handling HTTP request related to user operations
+Descripción de los Endpoints
+GET /api/tickets: Lista todos los tickets.
+GET /api/tickets/{ticket_id}: Obtiene los detalles de un ticket específico por su ID.
+POST /api/tickets: Crea un nuevo ticket. Requiere los datos definidos en TicketCreateSchema.
+PUT /api/tickets/{ticket_id}: Actualiza un ticket existente. Solo actualiza los campos enviados en la solicitud (los no enviados permanecen iguales).
+DELETE /api/tickets/{ticket_id}: Elimina un ticket específico por su ID.
 
 """
 
@@ -9,14 +15,15 @@ from django.conf import settings
 from ninja import Router
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 from travels.schemas import ErrorMessage # type: ignore
-
+from .models import Ticket
+from .schemas import TicketSchema, TicketCreateSchema, TicketUpdateSchema
 
 import jwt
 
 from ninja.errors import HttpError
-from django.shortcuts import render
 
 router = Router()
 
@@ -37,6 +44,54 @@ def bearer(request):
 
 
 
+
+
+@router.get("/tickets", response=list[TicketSchema])
+def list_tickets(request):
+    return Ticket.objects.all()
+
+@router.get("/tickets/{ticket_id}", response=TicketSchema)
+def get_ticket(request, ticket_id: int):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    return ticket
+
+@router.post("/tickets", response=TicketSchema)
+def create_ticket(request, payload: TicketCreateSchema):
+    # Verificar si el usuario existe
+    try:
+        user = User.objects.get(username=payload.username)
+    except User.DoesNotExist:
+        return {"error": "User not found"}, 404
+    
+    # Verificar si el usuario ya tiene un ticket
+    if Ticket.objects.filter(user=user).exists():
+        return {"error": "El usuario ya tiene un ticket creado."}, 400
+
+    # Si el usuario no tiene ticket, proceder a crear uno nuevo
+    ticket = Ticket.objects.create(
+        created_by=user,
+        cover_photo=payload.cover_photo,
+        airline=payload.airline,
+        price=payload.price,
+        description=payload.description
+    )
+    
+    return ticket
+
+@router.put("/tickets/{ticket_id}", response=TicketSchema)
+def update_ticket(request, ticket_id: int, data: TicketUpdateSchema):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    for attr, value in data.dict(exclude_unset=True).items():
+        setattr(ticket, attr, value)
+    ticket.update_status()  # Actualizar el estado del ticket si es necesario
+    ticket.save()
+    return ticket
+
+@router.delete("/tickets/{ticket_id}", response={204: None})
+def delete_ticket(request, ticket_id: int):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    ticket.delete()
+    return 204, None
 
 
 
