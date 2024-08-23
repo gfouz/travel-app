@@ -17,22 +17,28 @@ class UserSchema(ModelSchema):
 
         
 class TicketSchema(ModelSchema):
-    created_by: UserSchema
+    ticket_issuer: UserSchema
     
     class Meta:
         model = Ticket
-        fields = ['id', 'cover_photo', 'status', 'airline', 'price', 'description', 'created_at', 'created_by']
+        fields = ['id', 'status', 'airline', 'price', 'description', 'created_at', 'ticket_issuer']
 
 
-class TicketCreateSchema(ModelSchema):
-    class Meta:
-        model = Ticket
-        fields = ['cover_photo', 'airline', 'price', 'description', 'created_by']
+class TicketCreateSchema(Schema):
+    airline: str
+    price: float
+    description: str
+    ticket_issuer_id: int=None # similar to user_id
+    last_reservation_date: datetime
+    
 
-class TicketUpdateSchema(ModelSchema):
-    class Meta:
-        model = Ticket
-        fields = ['cover_photo', 'status', 'airline', 'price', 'description']
+class TicketUpdateSchema(Schema):
+    name: str
+    airline: str
+    price: float
+    description: str
+    ticket_issuer_id: int=None # similar to user_id
+    last_reservation_date: datetime
 
 class CheckInSchema(ModelSchema):
     class Meta:

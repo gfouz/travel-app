@@ -57,25 +57,17 @@ def get_ticket(request, ticket_id: int):
 
 @router.post("/tickets", response=TicketSchema)
 def create_ticket(request, payload: TicketCreateSchema):
-    # Verificar si el usuario existe
-    try:
-        user = User.objects.get(username=payload.username)
-    except User.DoesNotExist:
-        return {"error": "User not found"}, 404
-    
-    # Verificar si el usuario ya tiene un ticket
-    if Ticket.objects.filter(user=user).exists():
-        return {"error": "El usuario ya tiene un ticket creado."}, 400
-
-    # Si el usuario no tiene ticket, proceder a crear uno nuevo
+    user = User.objects.filter(pk=payload.ticket_issuer_id).first()
+    if not user:
+        raise HttpError(401, "Not authorarized, User not found!")
     ticket = Ticket.objects.create(
-        created_by=user,
-        cover_photo=payload.cover_photo,
+        ticket_issuer=user,
         airline=payload.airline,
         price=payload.price,
-        description=payload.description
+        description=payload.description,
+        last_reservation_date=payload.last_reservation_date
     )
-    
+    ticket.update_status()
     return ticket
 
 @router.put("/tickets/{ticket_id}", response=TicketSchema)
