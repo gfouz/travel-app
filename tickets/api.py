@@ -17,7 +17,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-from travels.schemas import ErrorMessage # type: ignore
 from .models import Ticket
 from .schemas import TicketSchema, TicketCreateSchema, TicketUpdateSchema
 
@@ -41,9 +40,6 @@ class AuthBearer(HttpBearer):
 @router.get("/bearer", auth=AuthBearer())
 def bearer(request):
     return {"payload": request.auth}
-
-
-
 
 
 @router.get("/tickets", response=list[TicketSchema])

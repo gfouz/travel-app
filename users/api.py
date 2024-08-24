@@ -1,8 +1,8 @@
 from ninja import Router, Form
 from ninja.responses import Response
 from ninja import Schema
-from travels.schemas import UserSchema
-from users.schemas import UserFullSchema
+from users.schemas import UserSchema, UserRegister, RegisterResponse
+from users.schemas import UserFullSchema, LoginResponse, UserLogin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
@@ -23,25 +23,6 @@ router = Router()
 
 class Error(Schema):
     message: str
-
-
-class UserRegister(Schema):
-    username: str
-    email: str
-    password: str
-
-class RegisterResponse(Schema):
-    message: str
-
-
-class LoginResponse(Schema):
-    user_id: str
-    username: str
-
-
-class UserLogin(Schema):
-    username: str
-    password: str
 
 
 class AuthBearer(HttpBearer):

@@ -20,7 +20,7 @@ class Ticket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     
-    def update_status(self):
+    def update_status(self, span=7):
         now = pendulum.now()  # Get the current date and time using pendulum
 
         # Convert last_reservation_date to a pendulum instance
@@ -28,8 +28,8 @@ class Ticket(models.Model):
 
         if last_reservation.is_past():
             self.status = 'unavailable'  # Set status to unavailable if the date has passed
-        elif last_reservation.subtract(days=7) <= now:
-            self.status = 'available'  # Set status to available if the date is within the next day
+        elif last_reservation.subtract(days=span) <= now:
+            self.status = 'available'  # Set status to available if the date is within the 7 next day
         else:
             self.status = 'draft'  # Otherwise, set status to draft
         
@@ -49,22 +49,7 @@ class Flight(models.Model):
     arrival_time = models.TimeField()
     luggage = models.IntegerField()  # Suponiendo que es un número
 
-class CheckIn(models.Model):
-    fullname = models.CharField(max_length=255)
-    passport = models.CharField(max_length=50)
-    ticket_number = models.CharField(max_length=50)
-    reservation_code = models.CharField(max_length=50)
-    STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-    ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-    created_by = models.CharField(max_length=255)
-    attached_document = models.FileField(upload_to='documents/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+
 
 class Adjustment(models.Model):
     whatsapp = models.CharField(max_length=20)

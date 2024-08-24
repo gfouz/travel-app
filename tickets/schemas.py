@@ -1,5 +1,5 @@
 from ninja import ModelSchema, Schema
-from travels.models import Ticket, CheckIn, Adjustment, Flight
+from tickets.models import Ticket
 from django.contrib.auth.models import User
 from datetime import datetime
 
@@ -40,17 +40,4 @@ class TicketUpdateSchema(Schema):
     ticket_issuer_id: int=None # similar to user_id
     last_reservation_date: datetime
 
-class CheckInSchema(ModelSchema):
-    class Meta:
-        model = CheckIn
-        fields = '__all__'  # Include all fields
 
-class FlightSchema(ModelSchema):
-    class Meta:
-        model = Flight
-        fields = '__all__'
-
-class AdjustmentSchema(ModelSchema):
-    class Meta:
-        model = Adjustment
-        fields = '__all__'  # Include all fields

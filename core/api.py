@@ -6,6 +6,8 @@ api = NinjaAPI()
 
 # or by Python path
 
-api.add_router("/travels/", "travels.api.router")
 api.add_router("/users/", "users.api.router")
+api.add_router("/tickets/", "tickets.api.router")
+
+
 

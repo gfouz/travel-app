@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "ninja",
-    "travels",
+    "tickets",
     "users"
 ]
 

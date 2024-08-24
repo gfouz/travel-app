@@ -61,3 +61,9 @@ los usuarios y los pasajes por parte del Administrador.
 
 [Travel application](https://github.com/gfouz/travel-app.git)
 
+git commands:
+
+git remote add origin https://github.com/gfouz/travel-backend.git
+git branch -M main
+git push -u origin main
+
