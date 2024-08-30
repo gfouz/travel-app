@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     "corsheaders",
     "ninja",
     "tickets",
-    "users"
+    "checkins",
+    "flights",
+    "users",
+    "adjustments"  
 ]
 
 MIDDLEWARE = [

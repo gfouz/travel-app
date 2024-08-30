@@ -23,6 +23,7 @@ from .schemas import TicketSchema, TicketCreateSchema, TicketUpdateSchema
 import jwt
 
 from ninja.errors import HttpError
+from flights.models import Flight
 
 router = Router()
 
@@ -41,32 +42,45 @@ class AuthBearer(HttpBearer):
 def bearer(request):
     return {"payload": request.auth}
 
+    
 
-@router.get("/tickets", response=list[TicketSchema])
-def list_tickets(request):
-    return Ticket.objects.all()
-
-@router.get("/tickets/{ticket_id}", response=TicketSchema)
-def get_ticket(request, ticket_id: int):
-    ticket = get_object_or_404(Ticket, id=ticket_id)
-    return ticket
-
-@router.post("/tickets", response=TicketSchema)
+@router.post("/create-ticket", response=TicketSchema)
 def create_ticket(request, payload: TicketCreateSchema):
     user = User.objects.filter(pk=payload.ticket_issuer_id).first()
     if not user:
-        raise HttpError(401, "Not authorarized, User not found!")
+        raise HttpError(404, "User not found!")
+
+    flight = Flight.objects.filter(pk=payload.flight_id).first()
+    if not flight:
+        raise HttpError(404, "Flight not found!")
+
+    # Here you can add additional validation for last_reservation_date if needed
+    if payload.last_reservation_date < pendulum.now().to_datetime_string():
+        raise HttpError(400, "Last reservation date cannot be in the past!")
+
     ticket = Ticket.objects.create(
         ticket_issuer=user,
+        flight=flight,
         airline=payload.airline,
         price=payload.price,
         description=payload.description,
         last_reservation_date=payload.last_reservation_date
     )
+    
     ticket.update_status()
     return ticket
 
-@router.put("/tickets/{ticket_id}", response=TicketSchema)
+@router.get("/get-tickets", response=list[TicketSchema])
+def list_tickets(request):
+    return Ticket.objects.all()
+
+@router.get("/get-ticket/{ticket_id}", response=TicketSchema)
+def get_ticket(request, ticket_id: int):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    return ticket
+
+
+@router.put("/update-ticket/{ticket_id}", response=TicketSchema)
 def update_ticket(request, ticket_id: int, data: TicketUpdateSchema):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     for attr, value in data.dict(exclude_unset=True).items():
@@ -75,7 +89,7 @@ def update_ticket(request, ticket_id: int, data: TicketUpdateSchema):
     ticket.save()
     return ticket
 
-@router.delete("/tickets/{ticket_id}", response={204: None})
+@router.delete("/delete-ticket/{ticket_id}", response={204: None})
 def delete_ticket(request, ticket_id: int):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.delete()

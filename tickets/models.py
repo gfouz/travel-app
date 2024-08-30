@@ -2,7 +2,7 @@ import pendulum
 # from datetime import timezone
 from django.db import models # type: ignore
 from django.contrib.auth.models import User # type: ignore
-
+from flights.models import Flight
 
 class Ticket(models.Model):
     cover_photo = models.ImageField(upload_to='cover_photos/', blank=True, null=True)
@@ -16,9 +16,10 @@ class Ticket(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
     last_reservation_date = models.DateTimeField()
-    ticket_issuer = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    flights = models.ForeignKey(Flight, on_delete=models.PROTECT)
+    ticket_issuer = models.ForeignKey(User, on_delete=models.PROTECT)
     modified_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def update_status(self, span=7):
         now = pendulum.now()  # Get the current date and time using pendulum
@@ -39,18 +40,4 @@ class Ticket(models.Model):
         return f"{self.price} - {self.airline} ({self.status})"
         
 
-class Flight(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-    from_location = models.CharField(max_length=255)
-    to_location = models.CharField(max_length=255)
-    flight_number = models.CharField(max_length=255)
-    date = models.DateField()
-    departure_time = models.TimeField()
-    arrival_time = models.TimeField()
-    luggage = models.IntegerField()  # Suponiendo que es un número
 
-
-
-class Adjustment(models.Model):
-    whatsapp = models.CharField(max_length=20)
-    email = models.EmailField(blank=True)
