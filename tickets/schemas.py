@@ -1,5 +1,9 @@
 from ninja import ModelSchema, Schema
 from tickets.models import Ticket
+from flights.schemas import FlightSchema
+
+
+
 from django.contrib.auth.models import User
 from datetime import datetime
 
@@ -18,10 +22,11 @@ class UserSchema(ModelSchema):
         
 class TicketSchema(ModelSchema):
     ticket_issuer: UserSchema
+    flights: FlightSchema
     
     class Meta:
         model = Ticket
-        fields = ['id', 'status', 'airline', 'price', 'description', 'created_at', 'ticket_issuer']
+        fields = ['id', 'status', 'airline', 'price','flights', 'description', 'last_reservation_date', 'ticket_issuer']
 
 
 class TicketCreateSchema(Schema):
@@ -29,15 +34,17 @@ class TicketCreateSchema(Schema):
     price: float
     description: str
     ticket_issuer_id: int=None # similar to user_id
-    last_reservation_date: datetime
+    flight_id: int=None # the flight for this ticket
+    last_reservation_date: str
     
 
 class TicketUpdateSchema(Schema):
-    name: str
     airline: str
     price: float
     description: str
-    ticket_issuer_id: int=None # similar to user_id
-    last_reservation_date: datetime
+    ticket_issuer_id: int=None #similar to user_id
+    flight_id: int=None #the flight for this ticket
+    last_reservation_date: str
 
 
+   

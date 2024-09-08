@@ -19,6 +19,8 @@ class Error(Schema):
 
 class UserRegister(Schema):
     username: str
+    first_name: str
+    last_name: str
     email: str
     password: str
 
@@ -27,8 +29,8 @@ class RegisterResponse(Schema):
 
 
 class LoginResponse(Schema):
-    user_id: str
-    username: str
+    id: str
+    token: str
 
 
 class UserLogin(Schema):

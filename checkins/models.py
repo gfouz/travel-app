@@ -2,10 +2,9 @@ from django.db import models
 from tickets.models import Ticket
 
 class CheckIn(models.Model):
-    name = models.CharField(max_length=255)
-    lastname = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     passport = models.CharField(max_length=50)
-    ticket_number = models.CharField(max_length=50)
     reservation_code = models.CharField(max_length=50)
     STATUS_CHOICES = [
         ('draft', 'Draft'),

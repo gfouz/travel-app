@@ -41,7 +41,7 @@ def bearer(request):
     return {"payload": request.auth}
 
 
-@router.get("/get/users", response={200: list[UserFullSchema]})
+@router.get("/get-users", response={200: list[UserFullSchema]})
 def get_user_list(request):
     users = User.objects.all()
     return users
@@ -56,8 +56,8 @@ def get_users(request):
 @router.post("/register")
 def register_user(request, data: UserRegister):
     if User.objects.filter(username=data.username).exists():
-        return {"message": "Username already exists"}
-    user = User(username=data.username, email=data.email)
+        return {"message": "Username already exists, select other name!"}
+    user = User(username=data.username, first_name=data.first_name,last_name=data.last_name, email=data.email)
     user.set_password(data.password)
     user.save()
 
@@ -67,20 +67,19 @@ def register_user(request, data: UserRegister):
 # If the same IP makes >5 reqs/min, will raise Ratelimited
 # @ratelimit(key="username", rate="3/m", method=["GET", "POST"], block=True)
 @router.post("/login")
-def login(request, data: UserLogin):
+def login_user(request, data: UserLogin):
     user = authenticate(request, username=data.username, password=data.password)
-    if user is not None:
-        # Create JWT token
-        payload = {
-            "user_id": user.id,
-            "username": user.username,
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+    
+    if not user:
+        raise HttpError(400, "Invalid credentials")
+
+    # Generar un token JWT para el usuario autenticado
+    payload = {"user_id": user.id}
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
         # response = Response({"token": token})
         # response.set_cookie("access_token", token, httponly=True)
-        return 200, {"user_id": user.id, "token": token}
-    else:
-        return Response({"message": "Bad request"}, status=400)
+    return 200, {"id": user.id, "token": token}
+    
 
 
 @router.get("/hello")

@@ -17,13 +17,14 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-from .models import Ticket
 from .schemas import TicketSchema, TicketCreateSchema, TicketUpdateSchema
 
 import jwt
-
+import pendulum
 from ninja.errors import HttpError
 from flights.models import Flight
+from .models import Ticket
+
 
 router = Router()
 
@@ -55,16 +56,16 @@ def create_ticket(request, payload: TicketCreateSchema):
         raise HttpError(404, "Flight not found!")
 
     # Here you can add additional validation for last_reservation_date if needed
-    if payload.last_reservation_date < pendulum.now().to_datetime_string():
+    if pendulum.parse(payload.last_reservation_date) < pendulum.now():
         raise HttpError(400, "Last reservation date cannot be in the past!")
 
     ticket = Ticket.objects.create(
         ticket_issuer=user,
-        flight=flight,
+        flights=flight,
         airline=payload.airline,
         price=payload.price,
         description=payload.description,
-        last_reservation_date=payload.last_reservation_date
+        last_reservation_date=pendulum.parse(payload.last_reservation_date)
     )
     
     ticket.update_status()
@@ -81,12 +82,39 @@ def get_ticket(request, ticket_id: int):
 
 
 @router.put("/update-ticket/{ticket_id}", response=TicketSchema)
-def update_ticket(request, ticket_id: int, data: TicketUpdateSchema):
-    ticket = get_object_or_404(Ticket, id=ticket_id)
-    for attr, value in data.dict(exclude_unset=True).items():
-        setattr(ticket, attr, value)
-    ticket.update_status()  # Actualizar el estado del ticket si es necesario
+def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
+    
+    # Obtener el ticket basado en el ID proporcionado
+    ticket = Ticket.objects.filter(pk=ticket_id).first()
+    if not ticket:
+        raise HttpError(404, "User not found!")
+    user = get_object_or_404(User,id=payload.ticket_issuer_id)
+    flight = get_object_or_404(Flight,id=payload.flight_id)
+
+    # Validar fecha de última reserva si se pasa en el payload
+    if payload.last_reservation_date and pendulum.parse(payload.last_reservation_date) < pendulum.now():
+        raise HttpError(400, "Last reservation date cannot be in the past!")
+
+    # Actualizar los campos del ticket según lo que se haya proporcionado en el payload
+    if payload.ticket_issuer_id:
+        ticket.ticket_issuer = user
+    if payload.flight_id:
+        ticket.flights = flight
+    if payload.airline:
+        ticket.airline = payload.airline
+    if payload.price is not None:  # Se asume que el precio puede ser 0, así que lo comprobamos con is not None
+        ticket.price = payload.price
+    if payload.description:
+        ticket.description = payload.description
+    if payload.last_reservation_date:
+        ticket.last_reservation_date = pendulum.parse(payload.last_reservation_date)
+
+    # Guardar los cambios en el ticket
     ticket.save()
+    
+    # Actualizar el estado del ticket si es necesario
+    ticket.update_status()
+    
     return ticket
 
 @router.delete("/delete-ticket/{ticket_id}", response={204: None})
