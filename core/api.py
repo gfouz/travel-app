@@ -1,8 +1,7 @@
-from ninja import NinjaAPI, Router
+from ninja import NinjaAPI
 
 
 # from posts.api import router as post_router
-router = Router()
 api = NinjaAPI()
 
 

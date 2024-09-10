@@ -19,5 +19,7 @@ class CheckInCreateSchema(Schema):
     
 
 class CheckInUpdateSchema(Schema):
-    fullname: str
-    passport: str     
+    first_name: str
+    last_name: str
+    passport: str
+    reservation_code: str  

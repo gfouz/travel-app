@@ -1,13 +1,14 @@
 from typing import List
 from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
+#from core.api import router
+from ninja import Router
+
 from flights.models import Flight
 from flights.schemas import FlightSchema, FlightCreateSchema, FlightUpdateSchema
-
-from core.api import Router
-
-
 router = Router()
+
+
 
 @router.post("/create-flight", response={ 200: FlightSchema})
 def create_flight(request, payload: FlightCreateSchema):
@@ -23,7 +24,7 @@ def get_flight(request, flight_id: int):
     
 @router.get("/get-flights", response=List[FlightSchema])
 def list_flights(request):
-    flightsList = Flight.objects.all()
+    flightsList = Flight.objects.prefetch_related('tickets').all()
     return flightsList  
 
 @router.put("/update-flight/{flight_id}", response={ 200: FlightSchema })

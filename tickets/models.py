@@ -5,6 +5,7 @@ from django.contrib.auth.models import User # type: ignore
 from flights.models import Flight
 
 class Ticket(models.Model):
+    role = models.CharField(max_length=255, default='Pasajes')
     cover_photo = models.ImageField(upload_to='cover_photos/', blank=True, null=True)
     STATUS_CHOICES = [
         ('draft', 'Draft'),
@@ -16,7 +17,7 @@ class Ticket(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     last_reservation_date = models.DateTimeField()
-    flights = models.ForeignKey(Flight, on_delete=models.PROTECT)
+    flight = models.ForeignKey(Flight, on_delete=models.PROTECT, related_name='tickets')
     ticket_issuer = models.ForeignKey(User, on_delete=models.PROTECT)
     modified_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

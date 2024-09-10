@@ -3,11 +3,10 @@ from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
 from adjustments.models import Adjustment
 from adjustments.schemas import AdjustmentSchema, AdjustmentCreateSchema, AdjustmentUpdateSchema
-
-from core.api import Router
-
-
+from ninja import Router
 router = Router()
+
+
 
 @router.post("/createAdjustment", response={ 200: AdjustmentSchema })
 def create_adjustment(request, payload: AdjustmentCreateSchema ):

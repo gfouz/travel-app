@@ -1,4 +1,4 @@
-from ninja import Router, Form
+from ninja import Form
 from ninja.responses import Response
 from ninja import Schema
 from users.schemas import UserSchema, UserRegister, RegisterResponse
@@ -12,6 +12,9 @@ import jwt
 from ninja.security import HttpBearer
 from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
+#from core.api import router
+from ninja import Router
+router = Router()
 
 
 # from django_ratelimit.decorators import ratelimit
@@ -20,7 +23,6 @@ from django.shortcuts import get_object_or_404
 # token for RobinHood user
 # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJ1c2VybmFtZSI6IlJvYmluSG9vZCJ9.Vk-799HIsCsO4bsuitXoXYvHfUhffLxgBSZN5ZLFG-g
 
-router = Router()
 
 
 class Error(Schema):

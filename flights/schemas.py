@@ -1,8 +1,17 @@
 from ninja import ModelSchema, Schema
 from datetime import time, date
-from flights.models import Flight
+from .models import Flight
+from typing import List
+
+class TicketSchema(Schema):
+    id: int
+    price: float
+    status: str
+    airline: str
+    description: str
 
 class FlightSchema(ModelSchema):
+    tickets: List[TicketSchema]
     class Meta:
         model = Flight
         fields = '__all__'
@@ -24,3 +33,4 @@ class FlightUpdateSchema(Schema):
     arrival_time: time
     departure_date: date
     luggage: int 
+

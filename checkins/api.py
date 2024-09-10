@@ -1,48 +1,14 @@
-"""
-checkin_api.py
 
-
-This module defines the API for managing check-ins in the system using Django Ninja.
-It provides endpoints for creating, retrieving, and updating check-in records associated with tickets.
-
-Endpoints:
-- POST /checkins: Create a new check-in record.
-- GET /checkins: Retrieve a list of all check-in records.
-- GET /checkins/{id}: Retrieve a specific check-in record by its ID.
-- PUT /checkins/{id}: Update an existing check-in record by its ID.
-
-Schemas:
-- CheckInCreateSchema: Schema for validating data when creating a new check-in.
-- CheckInUpdateSchema: Schema for validating data when updating an existing check-in.
-- CheckInSchema: Schema for serializing check-in data.
-
-Models:
-- CheckIn: The model representing a check-in record.
-- Ticket: The model representing a ticket associated with check-ins.
-
-Error Handling:
-- Returns a 404 Not Found error if a check-in with a specified ID does not exist.
-
-Example Usage:
-- To create a new check-in, send a POST request to /checkins with the required fields.
-- To retrieve all check-ins, send a GET request to /checkins.
-- To retrieve a specific check-in, send a GET request to /checkins/{id} where {id} is the ID of the check-in.
-- To update an existing check-in, send a PUT request to /checkins/{id} with the fields to be updated.
-
-This module is designed to provide a simple interface for managing check-in records in a ticketing system, ensuring data integrity and ease of use.
-"""
-
-
-
+from typing import List
 from django.http import HttpResponse, Http404
-from ninja import Router
 from ninja.errors import HttpError
 from .models import CheckIn, Ticket
 from .schemas import CheckInSchema, CheckInCreateSchema, CheckInUpdateSchema
-
+#from core.api import router
+from ninja import Router
 router = Router()
 
-@router.post('/create-checkin')
+@router.post('/create-checkin', response={200: CheckInSchema})
 def create_checkin(request, payload: CheckInCreateSchema):
     """Create a new checkin"""
     try:
@@ -54,7 +20,7 @@ def create_checkin(request, payload: CheckInCreateSchema):
     except Exception as e:
         raise HttpError(500, detail=str(e))
 
-@router.get('/get-checkins')
+@router.get('/get-checkins', response={200: List[CheckInSchema] })
 def get_checkins(request):
     """Get all checkins"""
     checkins = CheckIn.objects.all()

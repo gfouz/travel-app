@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Flight(models.Model):
+    role= models.CharField(max_length=255, default='Vuelos')
     departure_place = models.CharField(max_length=255)
     arrival_place = models.CharField(max_length=255)
     flight_number = models.CharField(max_length=255)
