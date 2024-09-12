@@ -3,12 +3,14 @@ from datetime import time, date
 from .models import Flight
 from typing import List
 
+
 class TicketSchema(Schema):
     id: int
     price: float
     status: str
     airline: str
     description: str
+
 
 class FlightSchema(ModelSchema):
     tickets: List[TicketSchema]

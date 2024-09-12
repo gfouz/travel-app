@@ -14,6 +14,7 @@ class Ticket(models.Model):
     ]
     status = models.CharField(max_length=15, choices=STATUS_CHOICES)
     airline = models.CharField(max_length=255)
+    booking_code = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     last_reservation_date = models.DateTimeField()

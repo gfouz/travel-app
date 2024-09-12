@@ -6,14 +6,14 @@ class CheckIn(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     passport = models.CharField(max_length=50)
-    reservation_code = models.CharField(max_length=50)
+    booking_code = models.CharField(max_length=50)
     STATUS_CHOICES = [
         ('draft', 'Draft'),
         ('pending', 'Pending'),
         ('completed', 'Completed'),
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='checkin')
     attached_document = models.FileField(upload_to='documents/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

@@ -14,7 +14,7 @@ class CheckInCreateSchema(Schema):
     first_name: str
     last_name: str
     passport: str
-    reservation_code: str
+    booking_code: str
     ticket_id: int=None
     
 
@@ -22,4 +22,4 @@ class CheckInUpdateSchema(Schema):
     first_name: str
     last_name: str
     passport: str
-    reservation_code: str  
+    booking_code: str  

@@ -10,7 +10,8 @@ class ErrorMessage(Schema):
 
 
     # exclude = ["last_login", "user_permissions"]
-
+class CheckinSchema(Schema):
+    passport: str
         
 class TicketSchema(ModelSchema):
     ticket_issuer: UserSchema
@@ -27,6 +28,7 @@ class TicketCreateSchema(Schema):
     description: str
     ticket_issuer_id: int=None # similar to user_id
     flight_id: int=None # the flight for this ticket
+    booking_code: str
     last_reservation_date: str
     
 
@@ -36,6 +38,7 @@ class TicketUpdateSchema(Schema):
     description: str
     ticket_issuer_id: int=None #similar to user_id
     flight_id: int=None #the flight for this ticket
+    booking_code: str
     last_reservation_date: str
 
 

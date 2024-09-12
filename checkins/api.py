@@ -37,8 +37,10 @@ def update_checkin(request, checkin_id: int, payload: CheckInUpdateSchema):
     """Update a checkin"""
     try:
         checkin = get_object_or_404(CheckIn, id=checkin_id)
-        checkin.fullname = payload.fullname
+        checkin.first_name = payload.first_name
+        checkin.last_name = payload.last_name
         checkin.passport = payload.passport
+        checkin.booking_code = payload.booking_code
         checkin.save()
         return checkin
     except CheckIn.DoesNotExist:

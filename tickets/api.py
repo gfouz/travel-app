@@ -50,6 +50,7 @@ def create_ticket(request, payload: TicketCreateSchema):
         ticket_issuer=user,
         flight=flight,
         airline=payload.airline,
+        booking_code = payload.booking_code,
         price=payload.price,
         description=payload.description,
         last_reservation_date=pendulum.parse(payload.last_reservation_date),
@@ -93,6 +94,8 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
         ticket.flight = flight
     if payload.airline:
         ticket.airline = payload.airline
+    if payload.booking_code:
+        ticket.booking_code = payload.booking_code    
     if (
         payload.price is not None
     ):  # Se asume que el precio puede ser 0, así que lo comprobamos con is not None
