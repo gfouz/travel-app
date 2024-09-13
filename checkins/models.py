@@ -13,7 +13,7 @@ class CheckIn(models.Model):
         ('completed', 'Completed'),
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='checkin')
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     attached_document = models.FileField(upload_to='documents/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

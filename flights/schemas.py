@@ -9,6 +9,7 @@ class TicketSchema(Schema):
     price: float
     status: str
     airline: str
+    booking_code: str
     description: str
 
 

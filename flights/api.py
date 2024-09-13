@@ -1,6 +1,8 @@
 from typing import List
 from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
+import pendulum
+
 #from core.api import router
 from ninja import Router
 
@@ -24,8 +26,11 @@ def get_flight(request, flight_id: int):
     
 @router.get("/get-flights", response=List[FlightSchema])
 def list_flights(request):
-    flightsList = Flight.objects.prefetch_related('tickets').all()
-    return flightsList  
+    flights = Flight.objects.prefetch_related('tickets').all()
+    # Update status of each flight based on the current date
+    for flight in flights:
+        flight.update_status()
+    return flights 
 
 @router.put("/update-flight/{flight_id}", response={ 200: FlightSchema })
 def update_flight(request, flight_id: int, payload: FlightUpdateSchema ):
