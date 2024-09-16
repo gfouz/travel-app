@@ -1,8 +1,6 @@
 from django.db import models
 import pendulum
 
-
-
 class Flight(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
@@ -18,6 +16,7 @@ class Flight(models.Model):
     arrival_time = models.TimeField()
     departure_date= models.DateTimeField()
     luggage = models.IntegerField( blank=True, null=True) 
+    connection_flight = models.ForeignKey( 'self', on_delete=models.CASCADE, null=True, related_name='connected_flight')
 
     def update_status(self, span=30):
         now = pendulum.now()  # Get the current date and time using pendulum
@@ -35,4 +34,4 @@ class Flight(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.price} - {self.airline} ({self.status})"
+        return f"{self.role} - {self.flight_number} ({self.status})"

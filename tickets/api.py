@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-from .schemas import TicketSchema, TicketCreateSchema, TicketUpdateSchema
+from .schemas import TicketSchema, TicketCreateSchema, TicketUpdateSchema, DeleteMessage
 
 import jwt
 import pendulum
@@ -114,8 +114,8 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
     return ticket
 
 
-@router.delete("/delete-ticket/{ticket_id}", response={204: None})
+@router.delete("/delete-ticket/{ticket_id}", response={200:DeleteMessage})
 def delete_ticket(request, ticket_id: int):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.delete()
-    return 204, None
+    return 200, {"message": "Success,Ticket was deleted!"}

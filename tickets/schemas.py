@@ -8,6 +8,8 @@ from users.schemas import UserSchema
 class ErrorMessage(Schema):
     message: str
 
+class DeleteMessage(Schema):
+    message: str
 
     # exclude = ["last_login", "user_permissions"]
 class CheckinSchema(Schema):

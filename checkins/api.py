@@ -3,7 +3,7 @@ from typing import List
 from django.http import HttpResponse, Http404
 from ninja.errors import HttpError
 from .models import CheckIn, Ticket
-from .schemas import CheckInSchema, CheckInCreateSchema, CheckInUpdateSchema
+from .schemas import CheckInSchema, CheckInCreateSchema, CheckInUpdateSchema, DeleteMessageSchema
 #from core.api import router
 from ninja import Router
 router = Router()
@@ -46,8 +46,8 @@ def update_checkin(request, checkin_id: int, payload: CheckInUpdateSchema):
     except CheckIn.DoesNotExist:
         raise HttpError(404, "Ticket not found")
 
-@router.delete("/delete-checkin/{checkin_id}", response={204: None})
+@router.delete("/delete-checkin/{checkin_id}", response={200: DeleteMessageSchema})
 def delete_checkin(request, checkin_id: int):
     checkin = get_object_or_404(CheckIn, id=checkin_id)
     checkin.delete()
-    return 204, None
+    return 200, {"message": "Success,Ticket was deleted!"}

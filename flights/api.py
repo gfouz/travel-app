@@ -14,7 +14,9 @@ router = Router()
 
 @router.post("/create-flight", response={ 200: FlightSchema})
 def create_flight(request, payload: FlightCreateSchema):
-    flight = Flight.objects.create(**payload.dict())
+    connection = Flight.objects.filter(id=payload.connection_flight_id).first() if payload.connection_flight_id else None
+    flight = Flight.objects.create(connection_flight = connection, **payload.dict(exclude={'connection_flight_id'}))
+    
     return flight
 
     
@@ -26,7 +28,7 @@ def get_flight(request, flight_id: int):
     
 @router.get("/get-flights", response=List[FlightSchema])
 def list_flights(request):
-    flights = Flight.objects.prefetch_related('tickets').all()
+    flights = Flight.objects.prefetch_related('connected_flight').all()
     # Update status of each flight based on the current date
     for flight in flights:
         flight.update_status()

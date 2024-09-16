@@ -3,6 +3,9 @@ from tickets.schemas import TicketSchema
 from checkins.models import CheckIn
 
 
+class DeleteMessageSchema(Schema):
+    message: str
+
 class CheckInSchema(ModelSchema):
     ticket: TicketSchema
     
