@@ -119,3 +119,4 @@ def delete_ticket(request, ticket_id: int):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.delete()
     return 200, {"message": "Success,Ticket was deleted!"}
+

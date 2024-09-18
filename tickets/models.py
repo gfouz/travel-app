@@ -2,7 +2,7 @@ import pendulum
 # from datetime import timezone
 from django.db import models # type: ignore
 from django.contrib.auth.models import User # type: ignore
-from flights.models import Flight
+from flights.models import Flight # type: ignore
 
 class Ticket(models.Model):
     role = models.CharField(max_length=255, default='Pasajes')
@@ -12,6 +12,7 @@ class Ticket(models.Model):
         ('available', 'Available'),
         ('unavailable', 'Unavailable'),
     ]
+    checked= models.BooleanField(default=False)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES)
     airline = models.CharField(max_length=255)
     booking_code = models.CharField(max_length=255)

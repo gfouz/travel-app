@@ -26,3 +26,5 @@ class CheckInUpdateSchema(Schema):
     last_name: str
     passport: str
     booking_code: str  
+    # ticket no se incluye aquí para permitir la actualización sin modificar la relación
+

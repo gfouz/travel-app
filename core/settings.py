@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "flights",
     "tickets",
     "checkins",
+    "passenger",
     "adjustments"  
 ]
 

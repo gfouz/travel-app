@@ -6,6 +6,7 @@ from typing import List
 
 class TicketSchema(Schema):
     id: int
+    checked: bool
     price: float
     status: str
     airline: str
@@ -19,7 +20,8 @@ class ConnectionFlightSchema(Schema):
     departure_time: time
     arrival_time: time
     departure_date: date
-    luggage: int     
+    luggage: int
+      
 
 
 class FlightSchema(ModelSchema):

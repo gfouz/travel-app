@@ -1,7 +1,10 @@
 from ninja import ModelSchema, Schema
 from flights.schemas import FlightSchema
+#from passenger.schemas import PassengerSchema
 from tickets.models import Ticket
 from users.schemas import UserSchema
+from typing import List
+
 #from django.contrib.auth.models import User
 
 
