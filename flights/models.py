@@ -8,6 +8,7 @@ class Flight(models.Model):
         ('expired', 'Expired'),
     ]
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='draft')
+    isConnected = models.BooleanField(default=False)
     role= models.CharField(max_length=255, default='Vuelos')
     departure_place = models.CharField(max_length=255)
     arrival_place = models.CharField(max_length=255)
@@ -15,6 +16,9 @@ class Flight(models.Model):
     departure_time = models.TimeField()
     arrival_time = models.TimeField()
     departure_date= models.DateTimeField()
+    adult_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    child_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    infant_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     luggage = models.IntegerField( blank=True, null=True) 
     connection_flight = models.ForeignKey( 'self', on_delete=models.CASCADE, null=True, related_name='connected_flight')
 

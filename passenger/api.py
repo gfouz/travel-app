@@ -11,16 +11,21 @@ from ninja import Router
 
 router = Router()
 
-
-
 @router.post("/create-passenger", response={ 200: PassengerSchema})
 def create_passenger(request, payload: CreatePassengerSchema):
     # Asegurar que el ticket exista en la base de datos
     ticket_instance = get_object_or_404( Ticket, id=payload.ticket_id )
+
+    if ticket_instance.status == 'booked':
+        return {"error": "Ticket already reserved"}
+
+    ticket_instance.status = 'booked'
+    ticket_instance.save()
+    
     # Crear el pasajero con la referencia al ticket
     passenger = Passenger.objects.create(
-        **payload.dict(),
-        ticket=ticket_instance
+        **payload.dict( exclude={'ticket_id'} ),
+          ticket=ticket_instance
     )
     return passenger
 

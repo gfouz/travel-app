@@ -53,6 +53,9 @@ def create_ticket(request, payload: TicketCreateSchema):
         booking_code = payload.booking_code,
         price=payload.price,
         description=payload.description,
+        adult_price = payload.adult_price, 
+        child_price = payload.child_price,
+        infant_price = payload.infant_price,
         last_reservation_date=pendulum.parse(payload.last_reservation_date),
     )
 
@@ -102,6 +105,16 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
         ticket.price = payload.price
     if payload.description:
         ticket.description = payload.description
+        
+    if payload.adult_price:
+        ticket.adult_price = payload.adult_price
+        
+    if payload.child_price:
+        ticket.child_price = payload.child_price
+        
+    if payload.infant_price:
+        ticket.infant_price = payload.infant_price        
+    
     if payload.last_reservation_date:
         ticket.last_reservation_date = pendulum.parse(payload.last_reservation_date)
 

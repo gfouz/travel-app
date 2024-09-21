@@ -8,7 +8,7 @@ class Ticket(models.Model):
     role = models.CharField(max_length=255, default='Pasajes')
     cover_photo = models.ImageField(upload_to='cover_photos/', blank=True, null=True)
     STATUS_CHOICES = [
-        ('draft', 'Draft'),
+        ('booked', 'Booked'),
         ('available', 'Available'),
         ('unavailable', 'Unavailable'),
     ]
@@ -16,8 +16,10 @@ class Ticket(models.Model):
     status = models.CharField(max_length=15, choices=STATUS_CHOICES)
     airline = models.CharField(max_length=255)
     booking_code = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
+    adult_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    child_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    infant_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     last_reservation_date = models.DateTimeField()
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name='tickets')
     ticket_issuer = models.ForeignKey(User, on_delete=models.PROTECT)

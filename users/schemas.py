@@ -2,6 +2,10 @@ from ninja import ModelSchema, Schema
 from django.contrib.auth.models import User
 
 
+class DeleteMessageSchema(Schema):
+    message: str
+
+
 class UserFullSchema(ModelSchema):
     class Meta:
         model = User

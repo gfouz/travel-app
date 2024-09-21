@@ -7,19 +7,25 @@ import pendulum
 from ninja import Router
 
 from flights.models import Flight
-from flights.schemas import FlightSchema, FlightCreateSchema, FlightUpdateSchema
+from flights.schemas import FlightSchema, FlightCreateSchema, FlightUpdateSchema, DeleteMessageSchema
 router = Router()
 
-
-
-@router.post("/create-flight", response={ 200: FlightSchema})
+@router.post("/create-flight", response={200: FlightSchema})
 def create_flight(request, payload: FlightCreateSchema):
-    connection = Flight.objects.filter(id=payload.connection_flight_id).first() if payload.connection_flight_id else None
-    flight = Flight.objects.create(connection_flight = connection, **payload.dict(exclude={'connection_flight_id'}))
+    # Check if there is a connected flight and update its isConnected status
+    connected_flight = Flight.objects.filter(id=payload.connection_flight_id).first() if payload.connection_flight_id else None
     
-    return flight
+    if connected_flight:
+        connected_flight.isConnected = True
+        connected_flight.save()  # Save the connected flight to persist changes
+    
+    # Create the origin flight with the connection
+    origin_flight = Flight(connection_flight=connected_flight, **payload.dict(exclude={'connection_flight_id'}))
+    origin_flight.isConnected = False
+    origin_flight.save()  # Save the origin flight to persist changes
+    
+    return origin_flight
 
-    
 @router.get("/get-flight/{flight_id}", response={ 200: FlightSchema })
 def get_flight(request, flight_id: int):
     flight = get_object_or_404(Flight, id=flight_id)
@@ -43,8 +49,9 @@ def update_flight(request, flight_id: int, payload: FlightUpdateSchema ):
     return flight
 
 
-@router.delete("/delete-flight/{flight_id}")
+@router.delete( "/delete-flight/{flight_id}", response={200: DeleteMessageSchema} )
 def delete_flight(request, flight_id: int):
     flight = get_object_or_404(Flight, id=flight_id)
     flight.delete()
-    return {"message": "flight deleted successfully"}
+    return 200, {"message": "Success, Flight was deleted!"}
+
