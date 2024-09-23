@@ -11,6 +11,9 @@ class TicketSchema(Schema):
     id: int
     checked: bool
     status: str
+    infant_price: float
+    child_price: float
+    adult_price: float
     airline: str
     booking_code: str
     description: str

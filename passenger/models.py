@@ -6,8 +6,11 @@ class Passenger(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     passport = models.CharField(max_length=50)
-    # email = models.EmailField(unique=True, null=True, blank=True)
-    ticket = models.ForeignKey(Ticket,null=True, blank=True, on_delete=models.CASCADE, related_name='passengers')
+    ticket = models.OneToOneField(Ticket, null=True, blank=True, on_delete=models.CASCADE, related_name='passenger')
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    # email = models.EmailField(unique=True, null=True, blank=True)
+    #ticket = models.ForeignKey(Ticket,null=True, blank=True, on_delete=models.CASCADE, related_name='passengers')
+
+
     

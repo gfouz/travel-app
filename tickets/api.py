@@ -12,6 +12,7 @@ import pendulum
 from ninja.errors import HttpError
 from flights.models import Flight
 from .models import Ticket
+from passenger.models import Passenger
 #from core.api import router
 from ninja import Router
 router = Router()
@@ -51,7 +52,6 @@ def create_ticket(request, payload: TicketCreateSchema):
         flight=flight,
         airline=payload.airline,
         booking_code = payload.booking_code,
-        price=payload.price,
         description=payload.description,
         adult_price = payload.adult_price, 
         child_price = payload.child_price,
@@ -65,7 +65,17 @@ def create_ticket(request, payload: TicketCreateSchema):
 
 @router.get("/get-tickets", response=list[TicketSchema])
 def list_tickets(request):
-    return Ticket.objects.all()
+    return Ticket.objects.prefetch_related('passenger').all()
+
+# http://127.0.0.1:8000/api/tickets/ticket-by-passenger/param/param
+@router.get("/ticket-by-passenger/{last_name}/{booking_code}", response=TicketSchema)
+def get_ticket_by_passenger_and_booking_code(request, last_name: str, booking_code: str):
+    # Encontrar al pasajero que coincide con el last_name
+    passenger = get_object_or_404(Passenger, last_name=last_name)
+    # Acceder al ticket a través de la relación OneToOne
+    ticket = get_object_or_404(Ticket, passenger=passenger, booking_code=booking_code)
+
+    return ticket
 
 
 @router.get("/get-ticket/{ticket_id}", response=TicketSchema)

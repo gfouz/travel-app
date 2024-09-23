@@ -14,7 +14,7 @@ class UserFullSchema(ModelSchema):
 class UserSchema(ModelSchema):
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = ["id", "username", "first_name", "last_name"]
 
     # exclude = ["last_login", "user_permissions"]
 class Error(Schema):

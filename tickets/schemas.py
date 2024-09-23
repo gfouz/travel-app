@@ -1,12 +1,11 @@
 from ninja import ModelSchema, Schema
 from flights.schemas import FlightSchema
-#from passenger.schemas import PassengerSchema
+
 from tickets.models import Ticket
 from users.schemas import UserSchema
 from typing import List
 
 #from django.contrib.auth.models import User
-
 
 class ErrorMessage(Schema):
     message: str
@@ -15,12 +14,15 @@ class DeleteMessage(Schema):
     message: str
 
     # exclude = ["last_login", "user_permissions"]
-class CheckinSchema(Schema):
+class AnyPassengerSchema(Schema):
+    first_name: str
+    last_name: str
     passport: str
         
 class TicketSchema(ModelSchema):
     ticket_issuer: UserSchema
     flight: FlightSchema
+    passenger: AnyPassengerSchema = None #Be sure to set this value to None to avoid validation errors.
     
     class Meta:
         model = Ticket

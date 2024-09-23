@@ -8,7 +8,6 @@ from .schemas import PassengerSchema, CreatePassengerSchema, UpdatePassengerSche
 #from core.api import router
 from ninja import Router
 
-
 router = Router()
 
 @router.post("/create-passenger", response={ 200: PassengerSchema})
