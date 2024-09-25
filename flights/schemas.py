@@ -45,7 +45,7 @@ class FlightCreateSchema(Schema):
     departure_time: time
     arrival_time: time
     departure_date: date
-    adult_price: float 
+    adult_price: float
     child_price: float
     infant_price: float
     luggage: int 

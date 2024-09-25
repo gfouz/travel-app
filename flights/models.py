@@ -8,6 +8,7 @@ class Flight(models.Model):
         ('expired', 'Expired'),
     ]
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='draft')
+    isMain= models.BooleanField(default=False)
     isConnected = models.BooleanField(default=False)
     role= models.CharField(max_length=255, default='Vuelos')
     departure_place = models.CharField(max_length=255)
@@ -29,12 +30,11 @@ class Flight(models.Model):
         departure_date = pendulum.instance(self.departure_date)
 
         if departure_date.is_past():
-            self.status = 'unavailable'  # Set status to unavailable if the date has passed
+            self.status = 'expired'  # Set status to unavailable if the date has passed
         elif departure_date.subtract(days=span) <= now:
             self.status = 'available'  # Set status to available if the date is within the 7 next day
         else:
             self.status = 'draft'  # Otherwise, set status to draft
-        
         self.save()
 
     def __str__(self):

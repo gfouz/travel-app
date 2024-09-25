@@ -48,8 +48,12 @@ def create_ticket(request, payload: TicketCreateSchema):
         raise HttpError(400, "Last reservation date cannot be in the past!")
 
     ticket = Ticket.objects.create(
+        status = 'reserved',
         ticket_issuer=user,
         flight=flight,
+        first_name = payload.first_name,
+        last_name = payload.last_name,
+        passport = payload.passport,
         airline=payload.airline,
         booking_code = payload.booking_code,
         description=payload.description,
@@ -71,9 +75,7 @@ def list_tickets(request):
 @router.get("/ticket-by-passenger/{last_name}/{booking_code}", response=TicketSchema)
 def get_ticket_by_passenger_and_booking_code(request, last_name: str, booking_code: str):
     # Encontrar al pasajero que coincide con el last_name
-    passenger = get_object_or_404(Passenger, last_name=last_name)
-    # Acceder al ticket a través de la relación OneToOne
-    ticket = get_object_or_404(Ticket, passenger=passenger, booking_code=booking_code)
+    ticket = get_object_or_404(Ticket, last_name=last_name, booking_code=booking_code)
 
     return ticket
 
@@ -107,6 +109,16 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
         ticket.flight = flight
     if payload.airline:
         ticket.airline = payload.airline
+
+        
+    if payload.first_name:
+        ticket.first_name = payload.first_name
+    if payload.last_name:
+        ticket.last_name = payload.last_name
+    if payload.passport:
+        ticket.passport = payload.passport
+
+     
     if payload.booking_code:
         ticket.booking_code = payload.booking_code    
     if (

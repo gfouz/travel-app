@@ -84,6 +84,4 @@ def login_user(request, data: UserLogin):
     
 
 
-@router.get("/hello")
-def hello(request):
-    return render(request, "users.html")
+

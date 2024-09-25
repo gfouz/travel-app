@@ -31,6 +31,9 @@ class TicketSchema(ModelSchema):
 
 class TicketCreateSchema(Schema):
     airline: str
+    first_name: str
+    last_name: str
+    passport: str
     adult_price: float 
     child_price: float
     infant_price: float
@@ -43,6 +46,9 @@ class TicketCreateSchema(Schema):
 
 class TicketUpdateSchema(Schema):
     airline: str
+    first_name: str
+    last_name: str
+    passport: str
     adult_price: float 
     child_price: float
     infant_price: float

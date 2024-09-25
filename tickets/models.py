@@ -8,10 +8,12 @@ class Ticket(models.Model):
     role = models.CharField(max_length=255, default='Pasajes')
     cover_photo = models.ImageField(upload_to='cover_photos/', blank=True, null=True)
     STATUS_CHOICES = [
-        ('booked', 'Booked'),
-        ('available', 'Available'),
-        ('unavailable', 'Unavailable'),
+        ('reserved', 'Reserved'),
+        ('expired', 'Expired'),
     ]
+    first_name = models.CharField(max_length=20, default='')
+    last_name = models.CharField(max_length=20, default='')
+    passport = models.CharField(max_length=40, default='')
     checked= models.BooleanField(default=False)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES)
     airline = models.CharField(max_length=255)
@@ -26,18 +28,18 @@ class Ticket(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    def update_status(self, span=7):
+    def update_status(self):
         now = pendulum.now()  # Get the current date and time using pendulum
 
         # Convert last_reservation_date to a pendulum instance
         last_reservation = pendulum.instance(self.last_reservation_date)
 
         if last_reservation.is_past():
-            self.status = 'unavailable'  # Set status to unavailable if the date has passed
-        elif last_reservation.subtract(days=span) <= now:
-            self.status = 'available'  # Set status to available if the date is within the 7 next day
-        else:
-            self.status = 'draft'  # Otherwise, set status to draft
+            self.status = 'expired'  # Set status to unavailable if the date has passed
+        #elif last_reservation.subtract(days=span) <= now:
+            #self.status = 'available'  # Set status to available if the date is within the 7 next day
+        #else:
+            #self.status = 'draft'  # Otherwise, set status to draft
         
         self.save()
 
