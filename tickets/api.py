@@ -43,10 +43,10 @@ def create_ticket(request, payload: TicketCreateSchema):
     if not flight:
         raise HttpError(404, "Flight not found!")
 
-    # Here you can add additional validation for last_reservation_date if needed
+    """ Here you can add additional validation for last_reservation_date if needed
     if pendulum.parse(payload.last_reservation_date) < pendulum.now():
         raise HttpError(400, "Last reservation date cannot be in the past!")
-
+    """
     ticket = Ticket.objects.create(
         status = 'reserved',
         ticket_issuer=user,
@@ -54,16 +54,14 @@ def create_ticket(request, payload: TicketCreateSchema):
         first_name = payload.first_name,
         last_name = payload.last_name,
         passport = payload.passport,
-        airline=payload.airline,
         booking_code = payload.booking_code,
-        description=payload.description,
         adult_price = payload.adult_price, 
         child_price = payload.child_price,
         infant_price = payload.infant_price,
-        last_reservation_date=pendulum.parse(payload.last_reservation_date),
+        #last_reservation_date=pendulum.parse(payload.last_reservation_date),
     )
 
-    ticket.update_status()
+    #ticket.update_status()
     return ticket
 
 
@@ -107,8 +105,7 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
         ticket.ticket_issuer = user
     if payload.flight_id:
         ticket.flight = flight
-    if payload.airline:
-        ticket.airline = payload.airline
+    
 
         
     if payload.first_name:
@@ -121,12 +118,6 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
      
     if payload.booking_code:
         ticket.booking_code = payload.booking_code    
-    if (
-        payload.price is not None
-    ):  # Se asume que el precio puede ser 0, así que lo comprobamos con is not None
-        ticket.price = payload.price
-    if payload.description:
-        ticket.description = payload.description
         
     if payload.adult_price:
         ticket.adult_price = payload.adult_price
@@ -136,9 +127,6 @@ def update_ticket(request, ticket_id: int, payload: TicketUpdateSchema):
         
     if payload.infant_price:
         ticket.infant_price = payload.infant_price        
-    
-    if payload.last_reservation_date:
-        ticket.last_reservation_date = pendulum.parse(payload.last_reservation_date)
 
     # Guardar los cambios en el ticket
     ticket.save()

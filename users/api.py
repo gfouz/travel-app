@@ -1,4 +1,5 @@
 from ninja import Form
+from datetime import datetime, timedelta
 from ninja.responses import Response
 from ninja import Schema
 from users.schemas import UserSchema, UserRegister, RegisterResponse
@@ -8,12 +9,18 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.shortcuts import render
+
 import jwt
+import pendulum
+
 from ninja.security import HttpBearer
 from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
 #from core.api import router
 from ninja import Router
+from flights.models import Flight
+from adjustments.models import Setting
+
 router = Router()
 
 
@@ -70,13 +77,25 @@ def register_user(request, data: UserRegister):
 # @ratelimit(key="username", rate="3/m", method=["GET", "POST"], block=True)
 @router.post("/login")
 def login_user(request, data: UserLogin):
+    setting = Setting.objects.first()
+    flights = Flight.objects.all()
+    for flight in flights:
+        flight.update_status(setting.unavailable_days, setting.available_days)
+        
     user = authenticate(request, username=data.username, password=data.password)
     
     if not user:
         raise HttpError(400, "Invalid credentials")
 
-    # Generar un token JWT para el usuario autenticado
-    payload = {"user_id": user.id}
+    # Establecer la expiración del token con Pendulum (por ejemplo, 1 hora)
+    #expiration = pendulum.now().add(hours=1)
+    expiration = datetime.utcnow() + timedelta(hours=1)
+    
+    payload = {
+        "user_id": user.id,
+        "exp": expiration  # Utiliza el timestamp
+    }
+    
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
         # response = Response({"token": token})
         # response.set_cookie("access_token", token, httponly=True)

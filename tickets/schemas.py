@@ -30,33 +30,31 @@ class TicketSchema(ModelSchema):
  
 
 class TicketCreateSchema(Schema):
-    airline: str
+    #airline: str
     first_name: str
     last_name: str
     passport: str
     adult_price: float 
     child_price: float
     infant_price: float
-    description: str
     ticket_issuer_id: int=None # similar to user_id
     flight_id: int=None # the flight for this ticket
     booking_code: str
-    last_reservation_date: str
+    #last_reservation_date: str
     
 
 class TicketUpdateSchema(Schema):
-    airline: str
+    #airline: str
     first_name: str
     last_name: str
     passport: str
     adult_price: float 
     child_price: float
     infant_price: float
-    description: str
     ticket_issuer_id: int=None #similar to user_id
     flight_id: int=None #the flight for this ticket
     booking_code: str
-    last_reservation_date: str
+    #last_reservation_date: str
 
 
    

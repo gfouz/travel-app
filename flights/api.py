@@ -1,7 +1,7 @@
 from typing import List
 from django.conf import settings 
 import jwt
-
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 import pendulum
 
 #from core.api import router
@@ -24,8 +24,15 @@ class AuthBearer(HttpBearer):
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
             return payload
+        
+        except ExpiredSignatureError:
+            raise HttpError(401, "Token has expired. Please login again.")
+        # Capturar cualquier otro error relacionado con el token
+        except InvalidTokenError:
+            raise HttpError(401, "Invalid token. Please login again.")    
         except:
             raise HttpError(401, "Not authorarized, invalid token!")
+        # Capturar el error cuando el token ha expirado    
 
 
 @router.get("/auth-bearer", auth=AuthBearer())
@@ -54,12 +61,12 @@ def get_flight(request, flight_id: int):
     return flight  
 
     
-@router.get("/get-flights", response=List[FlightSchema], auth=AuthBearer() )
+@router.get("/get-flights", response=List[FlightSchema] )
 def list_flights(request):
     flights = Flight.objects.prefetch_related('connected_flight').all()
     # Update status of each flight based on the current date
-    for flight in flights:
-        flight.update_status()
+    #for flight in flights:
+        #flight.update_status()
     return flights 
     
 @router.get("/get-flights/clients", response=List[FlightSchema] )

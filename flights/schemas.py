@@ -14,12 +14,11 @@ class TicketSchema(Schema):
     infant_price: float
     child_price: float
     adult_price: float
-    airline: str
     booking_code: str
-    description: str
     
 class ConnectionFlightSchema(Schema):
     flight_number: str
+    status: str
     departure_place: str 
     arrival_place: str
     departure_time: time
@@ -39,6 +38,7 @@ class FlightSchema(ModelSchema):
         
 
 class FlightCreateSchema(Schema):
+    airline: str=None
     flight_number: str
     departure_place: str 
     arrival_place: str
@@ -52,6 +52,7 @@ class FlightCreateSchema(Schema):
     connection_flight_id: int=None
 
 class FlightUpdateSchema(Schema):
+    airline: str=None
     flight_number: str
     departure_place: str 
     arrival_place: str

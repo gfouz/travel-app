@@ -1,17 +1,23 @@
 from ninja import ModelSchema, Schema
-from adjustments.models import Adjustment
+from adjustments.models import Setting
 
-class AdjustmentSchema(ModelSchema):
+class DeleteMessage(Schema):
+    message: str
+
+class SettingSchema(ModelSchema):
     class Meta:
-        model = Adjustment
+        model = Setting
         fields = '__all__'
 
-class AdjustmentCreateSchema(Schema):
+class SettingCreateSchema(Schema):
     email: str 
     whatsapp: str
+    available_days: int
+    unavailable_days: int
     
-
-class AdjustmentUpdateSchema(Schema):
+class SettingUpdateSchema(Schema):
     email: str 
     whatsapp: str
+    available_days: int
+    unavailable_days: int
     

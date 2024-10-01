@@ -1,4 +1,4 @@
-import pendulum
+#import pendulum
 # from datetime import timezone
 from django.db import models # type: ignore
 from django.contrib.auth.models import User # type: ignore
@@ -12,22 +12,20 @@ class Ticket(models.Model):
         ('expired', 'Expired'),
     ]
     first_name = models.CharField(max_length=20, default='')
-    last_name = models.CharField(max_length=20, default='')
+    last_name = models.CharField(max_length=20, default='', null=True, blank=True)
     passport = models.CharField(max_length=40, default='')
     checked= models.BooleanField(default=False)
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES)
-    airline = models.CharField(max_length=255)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='scheduled')
     booking_code = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
     adult_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     child_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     infant_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    last_reservation_date = models.DateTimeField()
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name='tickets')
     ticket_issuer = models.ForeignKey(User, on_delete=models.PROTECT)
     modified_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    #last_reservation_date = models.DateTimeField()
+    """
     def update_status(self):
         now = pendulum.now()  # Get the current date and time using pendulum
 
@@ -40,11 +38,9 @@ class Ticket(models.Model):
             #self.status = 'available'  # Set status to available if the date is within the 7 next day
         #else:
             #self.status = 'draft'  # Otherwise, set status to draft
-        
-        self.save()
+    self.save()
 
     def __str__(self):
-        return f"{self.price} - {self.airline} ({self.status})"
-        
-
+        return f"{self.booking_code}"
+    """    
 
